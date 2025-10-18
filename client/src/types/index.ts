@@ -20,7 +20,7 @@ export interface Task {
   projectId: number;
   title: string;
   description: string;
-  status: TaskStatus;
+  status: TaskStatus | number; // Allow both string enum and backend integer values
   assignee?: User;
   dueDate?: string;
   order: number;
@@ -33,6 +33,9 @@ export enum TaskStatus {
   InProgress = 'InProgress',
   Done = 'Done'
 }
+
+// Keep for backward compatibility with existing frontend code
+export type ProjectTaskStatus = TaskStatus
 
 export interface CreateProjectRequest {
   name: string;
@@ -49,7 +52,7 @@ export interface CreateTaskRequest {
   description: string;
   assigneeId?: number;
   dueDate?: string;
-  status: TaskStatus;
+  status: TaskStatus | number; // Allow both string enum and backend integer values
   order: number;
 }
 
@@ -58,7 +61,7 @@ export interface UpdateTaskRequest {
   description?: string;
   assigneeId?: number;
   dueDate?: string;
-  status?: TaskStatus;
+  status?: TaskStatus | number; // Allow both string enum and backend integer values
   order?: number;
 }
 

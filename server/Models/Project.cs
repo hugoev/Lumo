@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace ProjectManagementTool.Models
+namespace Lumo.Models
 {
     public class Project
     {

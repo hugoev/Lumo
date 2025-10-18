@@ -1,13 +1,15 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Linq;
 using BCrypt.Net;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using ProjectManagementTool.Data;
-using ProjectManagementTool.DTOs;
-using ProjectManagementTool.Models;
+using Lumo.Data;
+using Lumo.DTOs;
+using Lumo.Models;
 
-namespace ProjectManagementTool.Services
+namespace Lumo.Services
 {
     public class AuthService : IAuthService
     {
@@ -88,7 +90,7 @@ namespace ProjectManagementTool.Services
         private string GenerateJwtToken(User user)
         {
             var jwtSettings = _configuration.GetSection("Jwt");
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["Key"]));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["Key"] ?? throw new InvalidOperationException("JWT key not found")));
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var claims = new[]

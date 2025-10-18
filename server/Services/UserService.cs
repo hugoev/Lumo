@@ -1,9 +1,9 @@
 using Microsoft.EntityFrameworkCore;
-using ProjectManagementTool.Data;
-using ProjectManagementTool.DTOs;
-using ProjectManagementTool.Models;
+using Lumo.Data;
+using Lumo.DTOs;
+using Lumo.Models;
 
-namespace ProjectManagementTool.Services
+namespace Lumo.Services
 {
     public class UserService : IUserService
     {

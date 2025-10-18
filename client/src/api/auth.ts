@@ -8,8 +8,13 @@ const api = axios.create({
   }
 })
 
-// Request interceptor to add auth token
+// Request interceptor to add auth token (skip for login/register)
 api.interceptors.request.use((config) => {
+  // Don't add auth token for login and register requests
+  if (config.url === '/login' || config.url === '/register') {
+    return config
+  }
+
   const token = localStorage.getItem('token')
   if (token) {
     config.headers.Authorization = `Bearer ${token}`

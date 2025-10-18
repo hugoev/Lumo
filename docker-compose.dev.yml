@@ -35,7 +35,6 @@ services:
     depends_on:
       db:
         condition: service_healthy
-    # For hot reloading, we mount source code and use dotnet watch
     volumes:
       - ./server:/app
       - /app/bin
@@ -46,7 +45,6 @@ services:
     build:
       context: ./client
       dockerfile: Dockerfile.dev
-      target: development
     container_name: lumo_frontend
     restart: always
     ports:

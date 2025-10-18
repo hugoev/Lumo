@@ -1,23 +1,15 @@
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:8.0
 WORKDIR /app
 
-# Copy project files
-COPY *.csproj ./
+# Copy the project file and restore dependencies
+COPY Lumo.csproj ./
 RUN dotnet restore
 
-# Copy source code
+# Copy the entire source code
 COPY . ./
-RUN dotnet publish -c Release -o out
 
-# Runtime image
-FROM mcr.microsoft.com/dotnet/aspnet:8.0
-WORKDIR /app
-COPY --from=build /app/out ./
-
-# Create non-root user
-RUN useradd -m appuser
-USER appuser
-
+# Expose port for development
 EXPOSE 5000
 
-ENTRYPOINT ["dotnet", "ProjectManagementTool.dll"]
+# Use dotnet watch for hot reload in development
+ENTRYPOINT ["dotnet", "watch", "run", "--urls", "http://+:5000"]

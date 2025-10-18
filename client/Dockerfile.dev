@@ -1,15 +1,16 @@
 FROM node:18-alpine
+
 WORKDIR /app
 
 # Copy package files
 COPY package*.json ./
 RUN npm ci
 
-# Copy source code
+# Copy source code (will be mounted as volume for hot reloading)
 COPY . .
 
-# Expose port for Vite dev server
+# Expose Vite dev server port
 EXPOSE 5173
 
-# Use Vite dev server with hot reload
+# Start Vite dev server with hot reloading
 CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]

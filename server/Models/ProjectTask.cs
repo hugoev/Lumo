@@ -1,8 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace ProjectManagementTool.Models
+namespace Lumo.Models
 {
-    public enum TaskStatus
+    public enum ProjectTaskStatus
     {
         Todo,
         InProgress,
@@ -24,7 +24,7 @@ namespace ProjectManagementTool.Models
         public string Description { get; set; } = string.Empty;
 
         [Required]
-        public TaskStatus Status { get; set; } = TaskStatus.Todo;
+        public ProjectTaskStatus Status { get; set; } = ProjectTaskStatus.Todo;
 
         public int? AssigneeId { get; set; }
 

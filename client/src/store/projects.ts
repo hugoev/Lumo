@@ -6,6 +6,7 @@ import { computed, ref } from 'vue'
 export const useProjectsStore = defineStore('projects', () => {
   const projects = ref<Project[]>([])
   const currentProject = ref<Project | null>(null)
+  const loading = ref(false)
 
   const projectsById = computed(() => {
     const map = new Map<number, Project>()
@@ -17,9 +18,12 @@ export const useProjectsStore = defineStore('projects', () => {
 
   const getProjects = async () => {
     try {
+      loading.value = true
       projects.value = await projectsApi.getProjects()
     } catch (error) {
       throw error
+    } finally {
+      loading.value = false
     }
   }
 

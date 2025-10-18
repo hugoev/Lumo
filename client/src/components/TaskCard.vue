@@ -1,71 +1,41 @@
 <template>
-  <div
-    draggable="true"
-    @dragstart="onDragStart"
-    class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow cursor-move border border-gray-200 dark:border-gray-700"
-  >
-    <div class="space-y-3">
-      <!-- Task Title -->
-      <h3 class="font-medium text-gray-900 dark:text-white">{{ task.title }}</h3>
-
-      <!-- Task Description -->
-      <p v-if="task.description" class="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">
-        {{ task.description }}
-      </p>
-
-      <!-- Due Date -->
-      <div v-if="task.dueDate" class="flex items-center text-sm">
-        <svg class="w-4 h-4 text-gray-400 mr-1" fill="currentColor" viewBox="0 0 20 20">
-          <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd" />
-        </svg>
-        <span :class="isOverdue ? 'text-red-600 dark:text-red-400' : 'text-gray-600 dark:text-gray-400'">
-          {{ formatDate(task.dueDate) }}
-        </span>
+  <div class="task-card card" draggable="true" @dragstart="handleDragStart">
+    <div class="card-body">
+      <div class="task-header">
+        <h4 class="task-title">{{ task.title }}</h4>
+        <div class="task-actions">
+          <button @click="editTask" class="btn btn-ghost btn-sm">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+            </svg>
+          </button>
+          <button @click="deleteTask" class="btn btn-ghost btn-sm btn-danger">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="3,6 5,6 21,6"/>
+              <path d="M19,6v14a2,2 0 0,1-2,2H7a2,2 0 0,1-2-2V6m3,0V4a2,2 0 0,1,2-2h4a2,2 0 0,1,2,2v2"/>
+            </svg>
+          </button>
+        </div>
       </div>
 
-      <!-- Assignee -->
-      <div v-if="task.assignee" class="flex items-center text-sm">
-        <div class="w-6 h-6 bg-primary-100 dark:bg-primary-900 rounded-full flex items-center justify-center mr-2">
-          <span class="text-xs font-medium text-primary-700 dark:text-primary-300">
-            {{ getInitials(task.assignee.fullName) }}
+      <p class="task-description">{{ task.description }}</p>
+
+      <div class="task-meta">
+        <div class="task-status">
+          <span :class="`status-badge status-${task.status.toLowerCase()}`">
+            {{ task.status }}
           </span>
         </div>
-        <span class="text-gray-600 dark:text-gray-400">{{ task.assignee.fullName }}</span>
-      </div>
 
-      <!-- Actions -->
-      <div class="flex justify-between items-center pt-2 border-t border-gray-100 dark:border-gray-700">
-        <div class="flex space-x-2">
-          <button
-            @click="emit('edit', task.id)"
-            class="text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
-            title="Edit task"
-          >
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-            </svg>
-          </button>
-          <button
-            @click="emit('delete', task.id)"
-            class="text-gray-400 hover:text-red-600 dark:text-gray-500 dark:hover:text-red-400"
-            title="Delete task"
-          >
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-            </svg>
-          </button>
+        <div class="task-assignee" v-if="task.assignee">
+          <span class="assignee-label">Assigned to:</span>
+          <span class="assignee-name">{{ task.assignee.fullName }}</span>
         </div>
 
-        <!-- Status indicator -->
-        <div class="flex items-center">
-          <div
-            :class="[
-              'w-3 h-3 rounded-full',
-              task.status === 'Todo' ? 'bg-gray-400' :
-              task.status === 'InProgress' ? 'bg-blue-500' :
-              'bg-green-500'
-            ]"
-          ></div>
+        <div class="task-due-date" v-if="task.dueDate">
+          <span class="due-label">Due:</span>
+          <span class="due-date">{{ formatDate(task.dueDate) }}</span>
         </div>
       </div>
     </div>
@@ -73,51 +43,135 @@
 </template>
 
 <script setup lang="ts">
-import type { Task, User } from '@/types'
-import { computed } from 'vue'
+import type { Task } from '@/types';
 
 interface Props {
   task: Task
-  projectMembers: User[]
-}
-
-interface Emits {
-  (e: 'edit', taskId: number): void
-  (e: 'delete', taskId: number): void
-  (e: 'dragstart', event: DragEvent): void
 }
 
 const props = defineProps<Props>()
-const emit = defineEmits<Emits>()
 
-const isOverdue = computed(() => {
-  if (!props.task.dueDate) return false
-  return new Date(props.task.dueDate) < new Date()
-})
+const emit = defineEmits<{
+  edit: [task: Task]
+  delete: [task: Task]
+  dragstart: [event: DragEvent, task: Task]
+}>()
+
+const editTask = () => {
+  emit('edit', props.task)
+}
+
+const deleteTask = () => {
+  emit('delete', props.task)
+}
+
+const handleDragStart = (event: DragEvent) => {
+  if (event.dataTransfer) {
+    event.dataTransfer.effectAllowed = 'move'
+    event.dataTransfer.setData('text/plain', props.task.id.toString())
+  }
+  emit('dragstart', event, props.task)
+}
 
 const formatDate = (dateString: string) => {
-  return new Date(dateString).toLocaleDateString()
-}
-
-const getInitials = (name: string) => {
-  return name
-    .split(' ')
-    .map(word => word.charAt(0))
-    .join('')
-    .toUpperCase()
-    .substring(0, 2)
-}
-
-const onDragStart = (event: DragEvent) => {
-  emit('dragstart', event)
+  const date = new Date(dateString)
+  return date.toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric'
+  })
 }
 </script>
 
 <style scoped>
-.line-clamp-2 {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+.task-card {
+  margin-bottom: 1rem;
+}
+
+.task-card[draggable="true"]:hover {
+  cursor: grab;
+}
+
+.task-card[draggable="true"]:active {
+  cursor: grabbing;
+}
+
+.task-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.task-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #2d3748;
+  margin: 0;
+  flex: 1;
+  margin-right: 0.75rem;
+  line-height: 1.3;
+}
+
+.task-actions {
+  display: flex;
+  gap: 0.25rem;
+  opacity: 1;
+}
+
+.task-description {
+  color: #4a5568;
+  font-size: 0.875rem;
+  line-height: 1.4;
+  margin-bottom: 1rem;
+}
+
+.task-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.task-status {
+  align-self: flex-start;
+}
+
+.task-assignee,
+.task-due-date {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+}
+
+.assignee-label,
+.due-label {
+  color: #718096;
+  font-weight: 500;
+}
+
+.assignee-name {
+  color: #4a5568;
+  font-weight: 500;
+}
+
+.due-date {
+  color: #4a5568;
+  font-weight: 500;
+}
+
+@media (max-width: 640px) {
+  .task-header {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .task-title {
+    margin-right: 0;
+  }
+
+  .task-actions {
+    align-self: flex-end;
+  }
 }
 </style>

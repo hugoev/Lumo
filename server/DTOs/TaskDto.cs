@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
-using ProjectManagementTool.Models;
+using Lumo.Models;
 
-namespace ProjectManagementTool.DTOs
+namespace Lumo.DTOs
 {
     public class CreateTaskDto
     {
@@ -16,7 +16,7 @@ namespace ProjectManagementTool.DTOs
 
         public DateTime? DueDate { get; set; }
 
-        public TaskStatus Status { get; set; } = TaskStatus.Todo;
+        public ProjectTaskStatus Status { get; set; } = ProjectTaskStatus.Todo;
 
         public int Order { get; set; } = 0;
     }
@@ -33,7 +33,7 @@ namespace ProjectManagementTool.DTOs
 
         public DateTime? DueDate { get; set; }
 
-        public TaskStatus? Status { get; set; }
+        public ProjectTaskStatus? Status { get; set; }
 
         public int? Order { get; set; }
     }
@@ -44,7 +44,7 @@ namespace ProjectManagementTool.DTOs
         public int ProjectId { get; set; }
         public string Title { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
-        public TaskStatus Status { get; set; }
+        public ProjectTaskStatus Status { get; set; }
         public UserDto? Assignee { get; set; }
         public DateTime? DueDate { get; set; }
         public int Order { get; set; }
@@ -58,7 +58,7 @@ namespace ProjectManagementTool.DTOs
         public int TaskId { get; set; }
 
         [Required]
-        public TaskStatus Status { get; set; }
+        public ProjectTaskStatus Status { get; set; }
 
         public int Order { get; set; }
     }

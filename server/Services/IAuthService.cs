@@ -1,6 +1,6 @@
-using ProjectManagementTool.DTOs;
+using Lumo.DTOs;
 
-namespace ProjectManagementTool.Services
+namespace Lumo.Services
 {
     public interface IAuthService
     {

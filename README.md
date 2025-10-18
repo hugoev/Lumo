@@ -1,4 +1,4 @@
-# Project Management Tool
+# Lumo
 
 A modern, full-stack project management web application built with ASP.NET Core Web API and Vue 3. Features include project and task management, team collaboration, drag-and-drop Kanban boards, and dark mode support.
 
@@ -38,27 +38,76 @@ A modern, full-stack project management web application built with ASP.NET Core 
 
 ### Development Setup
 
+#### 🚀 Quick Start (Hot Reloading)
+
 1. **Clone the repository**
 
    ```bash
    git clone <repository-url>
-   cd ProjectManagementTool
+   cd Lumo
    ```
 
-2. **Start the application**
+2. **Start with hot reloading (Recommended)**
 
    ```bash
-   docker-compose up --build
+   docker-compose -f docker-compose.dev.yml up --build
    ```
 
 3. **Access the application**
 
-   - Frontend: http://localhost:5173
-   - Backend API: http://localhost:5000
-   - API Documentation: http://localhost:5000/swagger
+   - Frontend: http://localhost:5173 (Vite dev server with HMR)
+   - Backend API: http://localhost:5001 (ASP.NET with dotnet watch)
+   - API Documentation: http://localhost:5001/swagger
 
 4. **Database Setup**
    The PostgreSQL database will be automatically created and seeded with initial data.
+
+#### 🛠️ Development Features
+
+**Hot Reloading Setup** (`docker-compose.dev.yml`):
+
+- **Frontend Hot Reload**: Vue.js components, CSS, and JS files auto-reload instantly
+- **Backend Hot Reload**: C# files trigger automatic rebuilds with `dotnet watch`
+- **Volume Mounting**: Source code mounted directly for instant updates
+- **Development Servers**: Uses optimized dev servers instead of production builds
+
+#### 🏗️ Production Setup
+
+For production deployment, use the standard setup:
+
+```bash
+docker-compose up --build
+```
+
+This uses:
+
+- **Multi-stage builds** for optimized images
+- **Nginx for frontend** (static asset serving)
+- **ASP.NET runtime** for backend (smaller than SDK)
+
+#### 🏭 Production Deployment
+
+For production deployment, use the optimized production setup:
+
+1. **Create environment file (optional)**
+
+   ```bash
+   cp .env.example .env
+   # Edit .env with your production values
+   ```
+
+2. **Deploy with production configuration**
+   ```bash
+   docker-compose -f docker-compose.prod.yml up --build -d
+   ```
+
+The production setup includes:
+
+- **Multi-stage builds** for smaller, optimized images
+- **Environment variable configuration**
+- **Separate production Dockerfiles** (`Dockerfile.prod`)
+- **Nginx for frontend** serving static assets
+- **ASP.NET runtime image** for backend (smaller than SDK)
 
 ### Manual Setup (without Docker)
 
@@ -110,7 +159,7 @@ A modern, full-stack project management web application built with ASP.NET Core 
 ## 📁 Project Structure
 
 ```
-ProjectManagementTool/
+Lumo/
 ├── server/                 # ASP.NET Core Web API
 │   ├── Controllers/        # API controllers
 │   ├── Models/            # Entity models
@@ -126,9 +175,13 @@ ProjectManagementTool/
 │   │   ├── api/           # API client functions
 │   │   ├── types/         # TypeScript type definitions
 │   │   └── styles/        # CSS styles
+│   ├── Dockerfile         # Production build
+│   ├── Dockerfile.dev     # Development with hot reload
 │   ├── package.json       # Dependencies
 │   └── vite.config.ts     # Vite configuration
-└── docker-compose.yml     # Docker orchestration
+├── docker-compose.yml     # Production Docker orchestration
+├── docker-compose.dev.yml # Development with hot reload
+└── README.md              # This file
 ```
 
 ## 🔧 Configuration
@@ -140,7 +193,7 @@ ProjectManagementTool/
 ```json
 {
   "ConnectionStrings": {
-    "DefaultConnection": "Host=localhost;Port=5432;Database=projectmanagement;Username=postgres;Password=password"
+    "DefaultConnection": "Host=localhost;Port=5432;Database=lumo;Username=postgres;Password=password"
   },
   "Jwt": {
     "Key": "YourSuperSecretKeyThatIsAtLeast32CharactersLongForHS256",

@@ -1,9 +1,9 @@
 using Microsoft.EntityFrameworkCore;
-using ProjectManagementTool.Data;
-using ProjectManagementTool.DTOs;
-using ProjectManagementTool.Models;
+using Lumo.Data;
+using Lumo.DTOs;
+using Lumo.Models;
 
-namespace ProjectManagementTool.Services
+namespace Lumo.Services
 {
     public class TaskService : ITaskService
     {
@@ -116,7 +116,7 @@ namespace ProjectManagementTool.Services
                 Status = createDto.Status,
                 AssigneeId = createDto.AssigneeId,
                 DueDate = createDto.DueDate,
-                Order = createDto.Order > 0 ? createDto.Order : maxOrder + 1,
+                Order = maxOrder + 1,
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow
             };
@@ -146,7 +146,7 @@ namespace ProjectManagementTool.Services
 
             // Check if user can edit this task (owner, assignee, or project owner)
             var isProjectOwner = await _projectService.IsUserProjectOwnerAsync(task.ProjectId, userId);
-            var isAssignee = task.AssigneeId == userId;
+            var isAssignee = task.AssigneeId.HasValue && task.AssigneeId.Value == userId;
 
             if (!isProjectOwner && !isAssignee)
             {
@@ -206,20 +206,30 @@ namespace ProjectManagementTool.Services
             foreach (var update in updates)
             {
                 var task = await _context.Tasks.FindAsync(update.TaskId);
-                if (task == null) continue;
+                if (task == null) 
+                {
+                    throw new KeyNotFoundException($"Task with ID {update.TaskId} not found");
+                }
 
                 var isMember = await _projectService.IsUserProjectMemberAsync(task.ProjectId, userId);
-                if (!isMember) continue;
+                if (!isMember) 
+                {
+                    throw new UnauthorizedAccessException($"You do not have access to project {task.ProjectId}");
+                }
 
                 task.Status = update.Status;
                 task.Order = update.Order;
                 task.UpdatedAt = DateTime.UtcNow;
-
-                var taskDto = await GetTaskByIdAsync(task.Id, userId);
-                updatedTasks.Add(taskDto);
             }
 
             await _context.SaveChangesAsync();
+
+            foreach (var update in updates)
+            {
+                var taskDto = await GetTaskByIdAsync(update.TaskId, userId);
+                updatedTasks.Add(taskDto);
+            }
+
             return updatedTasks;
         }
     }

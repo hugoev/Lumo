@@ -1,10 +1,10 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ProjectManagementTool.DTOs;
-using ProjectManagementTool.Services;
+using Lumo.DTOs;
+using Lumo.Services;
 
-namespace ProjectManagementTool.Controllers
+namespace Lumo.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -12,28 +12,30 @@ namespace ProjectManagementTool.Controllers
     public class TasksController : ControllerBase
     {
         private readonly ITaskService _taskService;
-        private readonly int _userId;
 
-        public TasksController(ITaskService taskService, IHttpContextAccessor httpContextAccessor)
+        public TasksController(ITaskService taskService)
         {
             _taskService = taskService;
-            _userId = int.Parse(httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
         }
+
+
 
         [HttpGet("project/{projectId}")]
         public async Task<IActionResult> GetTasksForProject(int projectId)
         {
             try
             {
-                var tasks = await _taskService.GetTasksForProjectAsync(projectId, _userId);
+                var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? throw new UnauthorizedAccessException("User ID not found in token."));
+                var tasks = await _taskService.GetTasksForProjectAsync(projectId, userId).ConfigureAwait(false);
                 return Ok(tasks);
             }
-            catch (UnauthorizedAccessException ex)
+            catch (UnauthorizedAccessException)
             {
-                return Unauthorized(new { message = ex.Message });
+                return Unauthorized(new { message = "You are not authorized to perform this action." });
             }
             catch (Exception ex)
             {
+                Console.WriteLine(ex);
                 return StatusCode(500, new { message = "Internal server error" });
             }
         }
@@ -43,19 +45,21 @@ namespace ProjectManagementTool.Controllers
         {
             try
             {
-                var task = await _taskService.GetTaskByIdAsync(id, _userId);
+                var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? throw new UnauthorizedAccessException("User ID not found in token."));
+                var task = await _taskService.GetTaskByIdAsync(id, userId).ConfigureAwait(false);
                 return Ok(task);
             }
-            catch (KeyNotFoundException ex)
+            catch (KeyNotFoundException)
             {
-                return NotFound(new { message = ex.Message });
+                return NotFound(new { message = "The requested resource was not found." });
             }
-            catch (UnauthorizedAccessException ex)
+            catch (UnauthorizedAccessException)
             {
-                return Unauthorized(new { message = ex.Message });
+                return Unauthorized(new { message = "You are not authorized to perform this action." });
             }
             catch (Exception ex)
             {
+                Console.WriteLine(ex);
                 return StatusCode(500, new { message = "Internal server error" });
             }
         }
@@ -65,15 +69,17 @@ namespace ProjectManagementTool.Controllers
         {
             try
             {
-                var task = await _taskService.CreateTaskAsync(createDto, projectId, _userId);
+                var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? throw new UnauthorizedAccessException("User ID not found in token."));
+                var task = await _taskService.CreateTaskAsync(createDto, projectId, userId).ConfigureAwait(false);
                 return CreatedAtAction(nameof(GetTask), new { id = task.Id }, task);
             }
-            catch (UnauthorizedAccessException ex)
+            catch (UnauthorizedAccessException)
             {
-                return Unauthorized(new { message = ex.Message });
+                return Unauthorized(new { message = "You are not authorized to perform this action." });
             }
             catch (Exception ex)
             {
+                Console.WriteLine(ex);
                 return StatusCode(500, new { message = "Internal server error" });
             }
         }
@@ -83,19 +89,21 @@ namespace ProjectManagementTool.Controllers
         {
             try
             {
-                var task = await _taskService.UpdateTaskAsync(id, updateDto, _userId);
+                var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? throw new UnauthorizedAccessException("User ID not found in token."));
+                var task = await _taskService.UpdateTaskAsync(id, updateDto, userId).ConfigureAwait(false);
                 return Ok(task);
             }
-            catch (KeyNotFoundException ex)
+            catch (KeyNotFoundException)
             {
-                return NotFound(new { message = ex.Message });
+                return NotFound(new { message = "The requested resource was not found." });
             }
-            catch (UnauthorizedAccessException ex)
+            catch (UnauthorizedAccessException)
             {
-                return Unauthorized(new { message = ex.Message });
+                return Unauthorized(new { message = "You are not authorized to perform this action." });
             }
             catch (Exception ex)
             {
+                Console.WriteLine(ex);
                 return StatusCode(500, new { message = "Internal server error" });
             }
         }
@@ -105,19 +113,21 @@ namespace ProjectManagementTool.Controllers
         {
             try
             {
-                await _taskService.DeleteTaskAsync(id, _userId);
+                var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? throw new UnauthorizedAccessException("User ID not found in token."));
+                await _taskService.DeleteTaskAsync(id, userId).ConfigureAwait(false);
                 return NoContent();
             }
-            catch (KeyNotFoundException ex)
+            catch (KeyNotFoundException)
             {
-                return NotFound(new { message = ex.Message });
+                return NotFound(new { message = "The requested resource was not found." });
             }
-            catch (UnauthorizedAccessException ex)
+            catch (UnauthorizedAccessException)
             {
-                return Unauthorized(new { message = ex.Message });
+                return Unauthorized(new { message = "You are not authorized to perform this action." });
             }
             catch (Exception ex)
             {
+                Console.WriteLine(ex);
                 return StatusCode(500, new { message = "Internal server error" });
             }
         }
@@ -127,11 +137,21 @@ namespace ProjectManagementTool.Controllers
         {
             try
             {
-                var updatedTasks = await _taskService.UpdateTaskStatusesAsync(updates, _userId);
+                var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? throw new UnauthorizedAccessException("User ID not found in token."));
+                var updatedTasks = await _taskService.UpdateTaskStatusesAsync(updates, userId).ConfigureAwait(false);
                 return Ok(updatedTasks);
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound(new { message = "The requested resource was not found." });
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Unauthorized(new { message = "You are not authorized to perform this action." });
             }
             catch (Exception ex)
             {
+                Console.WriteLine(ex);
                 return StatusCode(500, new { message = "Internal server error" });
             }
         }

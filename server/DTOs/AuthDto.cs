@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace ProjectManagementTool.DTOs
+namespace Lumo.DTOs
 {
     public class RegisterDto
     {

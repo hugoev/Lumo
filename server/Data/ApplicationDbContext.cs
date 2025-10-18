@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
-using ProjectManagementTool.Models;
+using Lumo.Models;
 
-namespace ProjectManagementTool.Data
+namespace Lumo.Data
 {
     public class ApplicationDbContext : DbContext
     {
@@ -53,7 +53,7 @@ namespace ProjectManagementTool.Data
                 .HasForeignKey(t => t.AssigneeId)
                 .OnDelete(DeleteBehavior.SetNull);
 
-            // Configure enum conversion for TaskStatus
+            // Configure enum conversion for ProjectTaskStatus
             modelBuilder.Entity<ProjectTask>()
                 .Property(t => t.Status)
                 .HasConversion<string>();

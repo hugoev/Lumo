@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
-using ProjectManagementTool.DTOs;
-using ProjectManagementTool.Services;
+using Lumo.DTOs;
+using Lumo.Services;
 
-namespace ProjectManagementTool.Controllers
+namespace Lumo.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -27,7 +27,7 @@ namespace ProjectManagementTool.Controllers
             {
                 return BadRequest(new { message = ex.Message });
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return StatusCode(500, new { message = "Internal server error" });
             }
@@ -45,7 +45,7 @@ namespace ProjectManagementTool.Controllers
             {
                 return Unauthorized(new { message = ex.Message });
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return StatusCode(500, new { message = "Internal server error" });
             }

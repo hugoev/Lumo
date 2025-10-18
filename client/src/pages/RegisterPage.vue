@@ -1,109 +1,251 @@
 <template>
-  <div class="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-md w-full space-y-8">
-      <div>
-        <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900 dark:text-white">
-          Create your account
-        </h2>
-        <p class="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
-          Or
-          <RouterLink to="/login" class="font-medium text-primary-600 hover:text-primary-500">
-            sign in to existing account
-          </RouterLink>
-        </p>
+  <div class="auth-page">
+    <div class="auth-container">
+      <div class="auth-card card fade-in">
+        <div class="card-body">
+          <div class="auth-header">
+            <h1 class="auth-title">Create account</h1>
+            <p class="auth-subtitle">Get started with Lumo today</p>
+          </div>
+
+          <form @submit.prevent="handleRegister" class="auth-form">
+            <div class="form-group">
+              <label for="fullName" class="form-label">Full Name</label>
+              <input
+                id="fullName"
+                v-model="form.fullName"
+                type="text"
+                class="form-input"
+                placeholder="Enter your full name"
+                required
+                autocomplete="name"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="email" class="form-label">Email</label>
+              <input
+                id="email"
+                v-model="form.email"
+                type="email"
+                class="form-input"
+                placeholder="Enter your email"
+                required
+                autocomplete="email"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="password" class="form-label">Password</label>
+              <input
+                id="password"
+                v-model="form.password"
+                type="password"
+                class="form-input"
+                placeholder="Create a password"
+                required
+                autocomplete="new-password"
+                minlength="8"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="confirmPassword" class="form-label">Confirm Password</label>
+              <input
+                id="confirmPassword"
+                v-model="form.confirmPassword"
+                type="password"
+                class="form-input"
+                placeholder="Confirm your password"
+                required
+                autocomplete="new-password"
+              />
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-lg auth-btn" :disabled="loading">
+              <span v-if="loading" class="loading-spinner"></span>
+              <span v-else>Create Account</span>
+            </button>
+          </form>
+
+          <div class="auth-footer">
+            <p class="auth-footer-text">
+              Already have an account?
+              <router-link to="/login" class="auth-link">Sign in</router-link>
+            </p>
+          </div>
+        </div>
       </div>
-
-      <form class="mt-8 space-y-6" @submit.prevent="handleRegister">
-        <div class="rounded-md shadow-sm -space-y-px">
-          <div>
-            <label for="fullName" class="sr-only">Full Name</label>
-            <input
-              id="fullName"
-              v-model="form.fullName"
-              name="fullName"
-              type="text"
-              autocomplete="name"
-              required
-              class="input rounded-t-md"
-              placeholder="Full Name"
-            />
-          </div>
-          <div>
-            <label for="email" class="sr-only">Email address</label>
-            <input
-              id="email"
-              v-model="form.email"
-              name="email"
-              type="email"
-              autocomplete="email"
-              required
-              class="input"
-              placeholder="Email address"
-            />
-          </div>
-          <div>
-            <label for="password" class="sr-only">Password</label>
-            <input
-              id="password"
-              v-model="form.password"
-              name="password"
-              type="password"
-              autocomplete="new-password"
-              required
-              class="input rounded-b-md"
-              placeholder="Password"
-            />
-          </div>
-        </div>
-
-        <div>
-          <button
-            type="submit"
-            :disabled="loading"
-            class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50"
-          >
-            <span v-if="loading" class="mr-2">
-              <svg class="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-              </svg>
-            </span>
-            Create Account
-          </button>
-        </div>
-      </form>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { useToast } from '@/composables/useToast'
 import { useAuthStore } from '@/store/auth'
 import { reactive, ref } from 'vue'
-import { RouterLink, useRouter } from 'vue-router'
+import { useRouter } from 'vue-router'
 
-const authStore = useAuthStore()
 const router = useRouter()
+const authStore = useAuthStore()
+const { error: showError, success: showSuccess } = useToast()
 
 const loading = ref(false)
+
 const form = reactive({
   fullName: '',
   email: '',
-  password: ''
+  password: '',
+  confirmPassword: ''
 })
 
 const handleRegister = async () => {
+  if (!form.fullName || !form.email || !form.password || !form.confirmPassword) {
+    showError('Validation Error', 'Please fill in all fields')
+    return
+  }
+
+  if (form.password !== form.confirmPassword) {
+    showError('Validation Error', 'Passwords do not match')
+    return
+  }
+
+  if (form.password.length < 8) {
+    showError('Validation Error', 'Password must be at least 8 characters long')
+    return
+  }
+
+  loading.value = true
+
   try {
-    loading.value = true
-    await authStore.register(form)
+    await authStore.register({
+      fullName: form.fullName,
+      email: form.email,
+      password: form.password
+    })
+
+    showSuccess('Account Created', 'Welcome to Lumo! Your account has been created successfully.')
     router.push('/dashboard')
   } catch (error: any) {
-    console.error('Registration failed:', error)
-    // Toast notification would be shown here
-    if (window.$toast) {
-      window.$toast('error', 'Registration Failed', error.response?.data?.message || 'Registration failed')
-    }
+    const message = error.response?.data?.message || 'Registration failed. Please try again.'
+    showError('Registration Failed', message)
   } finally {
     loading.value = false
   }
 }
 </script>
+
+<style scoped>
+.auth-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 1rem;
+}
+
+.auth-container {
+  width: 100%;
+  max-width: 28rem;
+}
+
+.auth-card {
+  background-color: white;
+  box-shadow: 0 20px 25px rgba(0, 0, 0, 0.1), 0 10px 10px rgba(0, 0, 0, 0.04);
+}
+
+.auth-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.auth-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #2d3748;
+  margin: 0 0 0.5rem 0;
+}
+
+.auth-subtitle {
+  color: #4a5568;
+  margin: 0;
+  font-size: 0.875rem;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.auth-btn {
+  width: 100%;
+  margin-top: 0.5rem;
+}
+
+.auth-footer {
+  text-align: center;
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+.auth-footer-text {
+  color: #4a5568;
+  font-size: 0.875rem;
+  margin: 0;
+}
+
+.auth-link {
+  color: #4299e1;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease-in-out;
+}
+
+.auth-link:hover {
+  color: #3182ce;
+  text-decoration: underline;
+}
+
+/* Loading state */
+.auth-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.auth-btn:disabled:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+/* Form validation styles */
+.form-input:invalid {
+  border-color: #f56565;
+}
+
+.form-input:invalid:focus {
+  border-color: #f56565;
+  box-shadow: 0 0 0 3px rgba(245, 101, 101, 0.1);
+}
+
+@media (max-width: 640px) {
+  .auth-page {
+    padding: 0.5rem;
+  }
+
+  .auth-container {
+    max-width: none;
+  }
+
+  .auth-title {
+    font-size: 1.75rem;
+  }
+
+  .auth-form {
+    gap: 1.25rem;
+  }
+}
+</style>

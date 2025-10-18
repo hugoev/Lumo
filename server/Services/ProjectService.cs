@@ -1,9 +1,9 @@
 using Microsoft.EntityFrameworkCore;
-using ProjectManagementTool.Data;
-using ProjectManagementTool.DTOs;
-using ProjectManagementTool.Models;
+using Lumo.Data;
+using Lumo.DTOs;
+using Lumo.Models;
 
-namespace ProjectManagementTool.Services
+namespace Lumo.Services
 {
     public class ProjectService : IProjectService
     {
@@ -84,7 +84,7 @@ namespace ProjectManagementTool.Services
 
             if (project == null)
             {
-                throw new UnauthorizedAccessException("Project not found or access denied");
+                throw new KeyNotFoundException("Project not found or access denied");
             }
 
             return project;
@@ -101,6 +101,7 @@ namespace ProjectManagementTool.Services
             };
 
             _context.Projects.Add(project);
+            await _context.SaveChangesAsync(); // Save project first to get the ID
 
             // Add owner as a member with Owner role
             var membership = new ProjectMember
@@ -111,8 +112,7 @@ namespace ProjectManagementTool.Services
                 JoinedAt = DateTime.UtcNow
             };
             _context.ProjectMembers.Add(membership);
-
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(); // Save membership separately
 
             return new ProjectDto
             {
@@ -129,8 +129,8 @@ namespace ProjectManagementTool.Services
                         Email = u.Email,
                         CreatedAt = u.CreatedAt
                     })
-                    .FirstAsync(),
-                Members = new List<UserDto>(),
+                    .FirstOrDefaultAsync() ?? throw new KeyNotFoundException("Owner not found"),
+                Members = new List<UserDto> { },
                 TaskCount = 0
             };
         }
@@ -142,7 +142,7 @@ namespace ProjectManagementTool.Services
 
             if (project == null)
             {
-                throw new UnauthorizedAccessException("Project not found or access denied");
+                throw new KeyNotFoundException("Project not found or access denied");
             }
 
             if (updateDto.Name != null)
@@ -163,7 +163,7 @@ namespace ProjectManagementTool.Services
 
             if (project == null)
             {
-                throw new UnauthorizedAccessException("Project not found or access denied");
+                throw new KeyNotFoundException("Project not found or access denied");
             }
 
             _context.Projects.Remove(project);

@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
-using ProjectManagementTool.Models;
+using Lumo.Models;
 
-namespace ProjectManagementTool.DTOs
+namespace Lumo.DTOs
 {
     public class InviteMemberDto
     {

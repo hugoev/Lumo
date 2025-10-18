@@ -1,7 +1,7 @@
-using ProjectManagementTool.DTOs;
-using ProjectManagementTool.Models;
+using Lumo.DTOs;
+using Lumo.Models;
 
-namespace ProjectManagementTool.Services
+namespace Lumo.Services
 {
     public interface IProjectService
     {
