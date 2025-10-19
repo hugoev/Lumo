@@ -2,6 +2,8 @@
 
 A modern, full-stack project management web application built with ASP.NET Core Web API and Vue 3. Features include project and task management, team collaboration, drag-and-drop Kanban boards, and dark mode support.
 
+![Lumo Dashboard](./assets/dashboard.png)
+
 ## 🏗️ Architecture
 
 - **Backend**: ASP.NET Core 8 Web API with Entity Framework Core
@@ -28,6 +30,16 @@ A modern, full-stack project management web application built with ASP.NET Core 
 - **Drag & Drop**: Move tasks between columns and reorder within columns
 - **Real-time Updates**: Changes sync automatically
 - **Task Details**: Due dates, assignees, descriptions
+
+## 📸 Screenshots
+
+### Dashboard Overview
+
+![Dashboard](./assets/dashboard.png)
+
+### Kanban Board in Action
+
+![Kanban Board](./assets/kanban.png)
 
 ## 🚀 Quick Start
 
