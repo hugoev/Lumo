@@ -56,13 +56,13 @@ const handleLogout = () => {
 
 <style scoped>
 .navbar {
-  background-color: white;
-  border-bottom: 2px solid #e2e8f0;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.05);
   position: sticky;
   top: 0;
   z-index: 40;
-  backdrop-filter: blur(8px);
+  backdrop-filter: blur(10px);
 }
 
 .navbar-content {
@@ -71,6 +71,7 @@ const handleLogout = () => {
   justify-content: space-between;
   height: 4rem;
   gap: 2rem;
+  padding: 0 1rem;
 }
 
 .navbar-brand {
@@ -87,12 +88,13 @@ const handleLogout = () => {
 .brand-title {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #4299e1;
+  color: #1a202c;
   margin: 0;
+  transition: color 0.2s ease;
 }
 
 .brand-title:hover {
-  color: #3182ce;
+  color: #2d3748;
 }
 
 .navbar-breadcrumbs {
@@ -104,7 +106,7 @@ const handleLogout = () => {
 }
 
 .breadcrumb-link {
-  color: #4299e1;
+  color: #3182ce;
   text-decoration: none;
   font-size: 0.875rem;
   font-weight: 500;
@@ -114,8 +116,8 @@ const handleLogout = () => {
 }
 
 .breadcrumb-link:hover {
-  color: #3182ce;
-  background-color: #ebf8ff;
+  color: #2c5282;
+  background-color: #f7fafc;
 }
 
 .breadcrumb-separator {
@@ -143,7 +145,7 @@ const handleLogout = () => {
 
 .user-name {
   font-size: 0.875rem;
-  color: #4a5568;
+  color: #2d3748;
   font-weight: 500;
 }
 
