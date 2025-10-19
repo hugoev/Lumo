@@ -152,7 +152,8 @@ const handleRegister = async () => {
 
 .auth-card {
   background-color: white;
-  box-shadow: 0 20px 25px rgba(0, 0, 0, 0.1), 0 10px 10px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 20px 25px rgba(0, 0, 0, 0.15), 0 10px 10px rgba(0, 0, 0, 0.05);
+  border-radius: 1rem;
 }
 
 .auth-header {

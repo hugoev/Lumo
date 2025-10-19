@@ -57,11 +57,12 @@ const handleLogout = () => {
 <style scoped>
 .navbar {
   background-color: white;
-  border-bottom: 1px solid #e2e8f0;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border-bottom: 2px solid #e2e8f0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   position: sticky;
   top: 0;
   z-index: 40;
+  backdrop-filter: blur(8px);
 }
 
 .navbar-content {

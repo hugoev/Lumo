@@ -1,18 +1,18 @@
 <template>
   <div class="dashboard-page fade-in">
-    <div class="dashboard-header">
+    <header class="dashboard-header">
       <div class="dashboard-title">
         <h1>Your Projects</h1>
         <p>Manage and collaborate on your projects</p>
       </div>
-      <button @click="showCreateModal = true" class="btn btn-primary">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 0.5rem;">
+      <button @click="showCreateModal = true" class="btn btn-primary" aria-label="Create new project">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 0.5rem;" aria-hidden="true">
           <line x1="12" y1="5" x2="12" y2="19"/>
           <line x1="5" y1="12" x2="19" y2="12"/>
         </svg>
         New Project
       </button>
-    </div>
+    </header>
 
     <div v-if="loading" class="loading-container">
       <div class="loading-spinner"></div>
@@ -342,14 +342,17 @@ onMounted(() => {
   align-items: center;
   justify-content: space-between;
   margin-bottom: 3rem;
-  padding-bottom: 1.5rem;
-  border-bottom: 1px solid #e2e8f0;
+  padding: 2rem;
+  background-color: #ffffff;
+  border-radius: 0.75rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border-bottom: 2px solid #e2e8f0;
 }
 
 .dashboard-title h1 {
   font-size: 2.5rem;
   font-weight: 700;
-  color: #2d3748;
+  color: #1a202c;
   margin: 0 0 0.5rem 0;
 }
 
