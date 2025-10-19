@@ -108,11 +108,13 @@ const inviteMember = () => {
 
 .project-title {
   font-size: 1.25rem;
-  font-weight: 600;
-  color: #2d3748;
+  font-weight: 700;
+  font-family: 'Poppins', 'Inter', sans-serif;
+  color: #1a202c;
   margin: 0;
   flex: 1;
   margin-right: 1rem;
+  letter-spacing: -0.025em;
 }
 
 .project-actions {

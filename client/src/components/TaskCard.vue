@@ -137,12 +137,14 @@ const getStatusText = (status: string | number) => {
 
 .task-title {
   font-size: 1rem;
-  font-weight: 600;
-  color: #2d3748;
+  font-weight: 700;
+  font-family: 'Poppins', 'Inter', sans-serif;
+  color: #1a202c;
   margin: 0;
   flex: 1;
   margin-right: 0.75rem;
   line-height: 1.3;
+  letter-spacing: -0.025em;
 }
 
 .task-actions {

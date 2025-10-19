@@ -86,15 +86,18 @@ const handleLogout = () => {
 }
 
 .brand-title {
-  font-size: 1.5rem;
-  font-weight: 700;
+  font-family: 'Nunito', 'Poppins', 'Inter', sans-serif;
+  font-size: 1.75rem;
+  font-weight: 800;
   color: #1a202c;
   margin: 0;
-  transition: color 0.2s ease;
+  transition: color 0.2s ease, transform 0.2s ease;
+  letter-spacing: -0.02em;
 }
 
 .brand-title:hover {
-  color: #2d3748;
+  color: #3182ce;
+  transform: scale(1.02);
 }
 
 .navbar-breadcrumbs {
