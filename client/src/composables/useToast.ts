@@ -1,5 +1,13 @@
-import type { Toast } from '@/components/ToastContainer.vue'
 import { ref } from 'vue'
+
+// Toast interface definition (moved from ToastContainer.vue to avoid circular imports)
+export interface Toast {
+  id: string
+  type: 'success' | 'error' | 'warning' | 'info'
+  title: string
+  message: string
+  duration?: number
+}
 
 let toastCounter = 0
 

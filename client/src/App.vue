@@ -1,7 +1,8 @@
 <template>
   <div id="app" class="min-h-screen">
+    <a href="#main-content" class="skip-link">Skip to main content</a>
     <Navbar v-if="authStore.isAuthenticated" />
-    <main class="container">
+    <main id="main-content" class="container" role="main">
       <RouterView />
     </main>
     <ToastContainer />

@@ -1,14 +1,14 @@
 <template>
   <div class="project-board-page fade-in">
     <!-- Project Header -->
-    <div class="project-header">
+    <header class="project-header">
       <div class="project-info">
         <h1>{{ currentProject?.name }}</h1>
         <p>{{ currentProject?.description }}</p>
       </div>
       <div class="project-actions">
-        <button @click="showMembersModal = true" class="btn btn-secondary">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 0.5rem;">
+        <button @click="showMembersModal = true" class="btn btn-secondary" aria-label="View project members">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 0.5rem;" aria-hidden="true">
             <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
             <circle cx="9" cy="7" r="4"/>
             <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
@@ -16,15 +16,15 @@
           </svg>
           Members
         </button>
-        <button @click="showCreateTaskModal = true" class="btn btn-primary">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 0.5rem;">
+        <button @click="showCreateTaskModal = true" class="btn btn-primary" aria-label="Create new task">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 0.5rem;" aria-hidden="true">
             <line x1="12" y1="5" x2="12" y2="19"/>
             <line x1="5" y1="12" x2="19" y2="12"/>
           </svg>
           Add Task
         </button>
       </div>
-    </div>
+    </header>
 
     <!-- Loading State -->
     <div v-if="loading" class="loading-container">
@@ -33,12 +33,12 @@
     </div>
 
     <!-- Kanban Board -->
-    <div v-else class="kanban-board">
-      <div class="kanban-column" v-for="status in statuses" :key="status">
-        <div class="column-header">
-          <h3>{{ getStatusTitle(status) }}</h3>
-          <span class="task-count">{{ getTasksForStatus(status)?.length || 0 }}</span>
-        </div>
+    <div v-else class="kanban-board" role="region" aria-label="Task board">
+      <div class="kanban-column" v-for="status in statuses" :key="status" role="region" :aria-label="`${getStatusTitle(status)} tasks (${getTasksForStatus(status)?.length || 0})`">
+        <header class="column-header">
+          <h2>{{ getStatusTitle(status) }}</h2>
+          <span class="task-count" aria-label="Number of tasks">{{ getTasksForStatus(status)?.length || 0 }}</span>
+        </header>
 
         <div
           class="column-content"
@@ -107,8 +107,8 @@
             <label for="taskAssignee" class="form-label">Assignee</label>
             <select id="taskAssignee" v-model="createTaskForm.assigneeId" class="form-input">
               <option value="">Unassigned</option>
-              <option v-for="member in projectMembers" :key="member.user?.id" :value="member.user?.id">
-                {{ member.user?.fullName }}
+              <option v-for="member in projectMembers" :key="member.id" :value="member.id">
+                {{ member.fullName }}
               </option>
             </select>
           </div>
@@ -177,8 +177,8 @@
             <label for="editTaskAssignee" class="form-label">Assignee</label>
             <select id="editTaskAssignee" v-model="editTaskForm.assigneeId" class="form-input">
               <option value="">Unassigned</option>
-              <option v-for="member in projectMembers" :key="member.user?.id" :value="member.user?.id">
-                {{ member.user?.fullName }}
+              <option v-for="member in projectMembers" :key="member.id" :value="member.id">
+                {{ member.fullName }}
               </option>
             </select>
           </div>
@@ -242,14 +242,14 @@
         </div>
 
         <div v-else class="members-list">
-          <div v-for="member in projectMembers" :key="member.user?.id" class="member-item">
+          <div v-for="member in projectMembers" :key="member.id" class="member-item">
             <div class="member-avatar">
-              {{ member.user?.fullName?.charAt(0)?.toUpperCase() || '?' }}
+              {{ member.fullName?.charAt(0)?.toUpperCase() || '?' }}
             </div>
             <div class="member-info">
-              <div class="member-name">{{ member.user?.fullName || 'Unknown User' }}</div>
-              <div class="member-email">{{ member.user?.email || 'No email' }}</div>
-              <div class="member-role">{{ member.role || 'Member' }}</div>
+              <div class="member-name">{{ member.fullName || 'Unknown User' }}</div>
+              <div class="member-email">{{ member.email || 'No email' }}</div>
+              <div class="member-role">Member</div>
             </div>
           </div>
         </div>
@@ -342,7 +342,7 @@ const editingTask = ref<Task | null>(null)
 
 const projectId = computed(() => parseInt(route.params.id as string))
 const currentProject = computed(() => projectsStore.currentProject)
-const tasks = computed(() => tasksStore.tasks)
+// const tasks = computed(() => tasksStore.tasks) // Not used directly
 const tasksByStatus = computed(() => tasksStore.tasksByStatus)
 const projectMembers = computed(() => currentProject.value?.members || [])
 
@@ -416,7 +416,10 @@ const handleEditTask = (task: Task) => {
   editingTask.value = task
   editTaskForm.title = task.title
   editTaskForm.description = task.description
-  editTaskForm.status = task.status
+  // Convert status to string enum if it's a number
+  editTaskForm.status = typeof task.status === 'number'
+    ? (task.status === 0 ? TaskStatus.Todo : task.status === 1 ? TaskStatus.InProgress : TaskStatus.Done)
+    : task.status
   editTaskForm.assigneeId = task.assignee?.id?.toString() || ''
   editTaskForm.dueDate = task.dueDate ? task.dueDate.split('T')[0] : ''
   showEditTaskModal.value = true
@@ -470,7 +473,7 @@ const confirmDeleteTask = async () => {
 }
 
 // Drag and Drop functionality
-const handleDragStart = (event: DragEvent, task: Task) => {
+const handleDragStart = (_event: DragEvent, task: Task) => {
   draggedTask.value = task
 }
 
@@ -598,13 +601,17 @@ onMounted(() => {
   justify-content: space-between;
   margin-bottom: 3rem;
   padding-bottom: 1.5rem;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 2px solid #e2e8f0;
+  background-color: #ffffff;
+  padding: 2rem;
+  border-radius: 0.75rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .project-info h1 {
   font-size: 2.5rem;
   font-weight: 700;
-  color: #2d3748;
+  color: #1a202c;
   margin: 0 0 0.5rem 0;
 }
 
@@ -625,9 +632,10 @@ onMounted(() => {
 .kanban-column {
   display: flex;
   flex-direction: column;
-  background-color: #f7fafc;
+  background-color: #ffffff;
   border-radius: 0.75rem;
   border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .column-header {
@@ -636,11 +644,11 @@ onMounted(() => {
   justify-content: space-between;
   padding: 1rem 1.5rem;
   border-bottom: 1px solid #e2e8f0;
-  background-color: white;
+  background-color: #f8fafc;
   border-radius: 0.75rem 0.75rem 0 0;
 }
 
-.column-header h3 {
+.column-header h2 {
   font-size: 1rem;
   font-weight: 600;
   color: #2d3748;
@@ -650,14 +658,15 @@ onMounted(() => {
 }
 
 .task-count {
-  background-color: #e2e8f0;
-  color: #4a5568;
+  background-color: #4299e1;
+  color: white;
   font-size: 0.75rem;
-  font-weight: 500;
+  font-weight: 600;
   padding: 0.25rem 0.5rem;
   border-radius: 9999px;
   min-width: 1.5rem;
   text-align: center;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .column-content {
@@ -668,7 +677,10 @@ onMounted(() => {
 }
 
 .column-content.drag-over {
-  background-color: #edf2f7;
+  background-color: #ebf8ff;
+  border: 2px dashed #3182ce;
+  border-radius: 0.75rem;
+  box-shadow: inset 0 0 0 2px rgba(49, 130, 206, 0.2);
 }
 
 .empty-column {

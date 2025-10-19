@@ -1,23 +1,23 @@
 <template>
-  <nav class="navbar">
+  <nav class="navbar" role="navigation" aria-label="Main navigation">
     <div class="container">
       <div class="navbar-content">
         <div class="navbar-brand">
-          <router-link to="/dashboard" class="brand-link">
+          <router-link to="/dashboard" class="brand-link" aria-label="Lumo home">
             <h1 class="brand-title">Lumo</h1>
           </router-link>
         </div>
 
-        <div class="navbar-breadcrumbs" v-if="showBreadcrumbs">
-          <router-link to="/dashboard" class="breadcrumb-link">Projects</router-link>
-          <span v-if="currentProject" class="breadcrumb-separator">/</span>
-          <span v-if="currentProject" class="breadcrumb-current">{{ currentProject.name }}</span>
-        </div>
+        <nav class="navbar-breadcrumbs" v-if="showBreadcrumbs" aria-label="Breadcrumb">
+          <router-link to="/dashboard" class="breadcrumb-link" aria-label="Back to projects">Projects</router-link>
+          <span v-if="currentProject" class="breadcrumb-separator" aria-hidden="true">/</span>
+          <span v-if="currentProject" class="breadcrumb-current" aria-current="page">{{ currentProject.name }}</span>
+        </nav>
 
         <div class="navbar-menu">
           <div class="navbar-user">
-            <span class="user-name">{{ authStore.user?.fullName }}</span>
-            <button @click="handleLogout" class="btn btn-ghost btn-sm">
+            <span class="user-name" aria-label="Current user">{{ authStore.user?.fullName }}</span>
+            <button @click="handleLogout" class="btn btn-ghost btn-sm" aria-label="Logout">
               Logout
             </button>
           </div>

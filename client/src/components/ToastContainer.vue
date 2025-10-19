@@ -46,16 +46,8 @@
 </template>
 
 <script setup lang="ts">
-import { toastManager } from '@/composables/useToast'
+import { toastManager, type Toast } from '@/composables/useToast'
 import { onMounted, onUnmounted, ref } from 'vue'
-
-export interface Toast {
-  id: string
-  type: 'success' | 'error' | 'warning' | 'info'
-  title: string
-  message: string
-  duration?: number
-}
 
 // Use the toastManager from the composable
 const toasts = ref<Toast[]>([])
