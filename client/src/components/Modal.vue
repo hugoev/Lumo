@@ -149,7 +149,7 @@ watch(
 
 .modal-close-btn:hover {
   color: #4a5568;
-  background-color: #f7fafc;
+  background-color: #fafbfc;
 }
 
 .modal-body {

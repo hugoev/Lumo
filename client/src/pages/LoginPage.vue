@@ -97,11 +97,16 @@ const handleLogin = async () => {
 <style scoped>
 .auth-page {
   min-height: 100vh;
+  width: 100vw;
+  position: fixed;
+  top: 0;
+  left: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #f8fafc 0%, #edf2f7 100%);
+  background: #ffffff;
   padding: 1rem;
+  z-index: 999;
 }
 
 .auth-container {
@@ -110,9 +115,10 @@ const handleLogin = async () => {
 }
 
 .auth-card {
-  background-color: white;
+  background-color: #fafbfc;
   box-shadow: 0 20px 25px rgba(0, 0, 0, 0.15), 0 10px 10px rgba(0, 0, 0, 0.05);
   border-radius: 1rem;
+  border: 1px solid #e2e8f0;
 }
 
 .auth-header {

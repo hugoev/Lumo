@@ -23,7 +23,7 @@ body {
     'Ubuntu', 'Cantarell', 'Open Sans', 'Helvetica Neue', sans-serif;
   font-weight: 400;
   color: #2d3748;
-  background-color: #f8fafc;
+  background-color: #ffffff;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -242,7 +242,7 @@ p {
 }
 
 .btn-ghost:hover {
-  background-color: #f7fafc;
+  background-color: #f8fafc;
 }
 
 .btn-sm {
@@ -279,7 +279,7 @@ p {
   font-size: 1rem;
   border: 2px solid #cbd5e0;
   border-radius: 0.5rem;
-  background-color: white;
+  background-color: #ffffff;
   outline: none;
   min-height: 44px;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
@@ -336,7 +336,7 @@ p {
 
 .card-footer {
   padding: 1rem 1.5rem;
-  background-color: #f7fafc;
+  background-color: #f8fafc;
   border-top: 1px solid #e2e8f0;
 }
 
@@ -521,6 +521,7 @@ p {
    Dark Mode Support (Optional)
    ========================================================================== */
 
+/* Dark mode styles disabled to maintain consistent light theme
 @media (prefers-color-scheme: dark) {
   body {
     color: #e2e8f0;
@@ -547,7 +548,7 @@ p {
     border-color: #4a5568;
     color: #e2e8f0;
   }
-}
+} */
 
 /* ==========================================================================
    Print Styles

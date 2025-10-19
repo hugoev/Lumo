@@ -591,7 +591,8 @@ onMounted(() => {
 
 <style scoped>
 .project-board-page {
-  min-height: calc(100vh - 4rem);
+  min-height: calc(100vh - 4rem); /* Account for navbar height */
+  width: 100%;
   padding: 2rem 1rem;
 }
 
@@ -602,7 +603,7 @@ onMounted(() => {
   margin-bottom: 3rem;
   padding-bottom: 1.5rem;
   border-bottom: 2px solid #e2e8f0;
-  background-color: #ffffff;
+  background-color: #fafbfc;
   padding: 2rem;
   border-radius: 0.75rem;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
@@ -632,7 +633,7 @@ onMounted(() => {
 .kanban-column {
   display: flex;
   flex-direction: column;
-  background-color: #ffffff;
+  background-color: #fafbfc;
   border-radius: 0.75rem;
   border: 1px solid #e2e8f0;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
@@ -788,7 +789,7 @@ onMounted(() => {
   align-items: center;
   gap: 1rem;
   padding: 1rem;
-  background-color: #f7fafc;
+  background-color: #fafbfc;
   border-radius: 0.5rem;
   border: 1px solid #e2e8f0;
 }

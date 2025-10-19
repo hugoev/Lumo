@@ -332,6 +332,7 @@ onMounted(() => {
 
 <style scoped>
 .dashboard-page {
+  min-height: calc(100vh - 4rem); /* Account for navbar height */
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem 1rem;
@@ -343,7 +344,7 @@ onMounted(() => {
   justify-content: space-between;
   margin-bottom: 3rem;
   padding: 2rem;
-  background-color: #ffffff;
+  background-color: #fafbfc;
   border-radius: 0.75rem;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   border-bottom: 2px solid #e2e8f0;

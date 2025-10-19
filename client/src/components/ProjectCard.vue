@@ -87,7 +87,7 @@ const inviteMember = () => {
 <style scoped>
 .project-card {
   cursor: pointer;
-  background-color: #ffffff;
+  background-color: #fafbfc;
   border: 1px solid #e2e8f0;
   border-radius: 0.75rem;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
