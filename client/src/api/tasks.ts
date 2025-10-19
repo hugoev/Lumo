@@ -42,7 +42,7 @@ export const tasksApi = {
     await api.delete(`/${id}`)
   },
 
-  async updateTaskStatuses(updates: Array<{ taskId: number; status: string; order: number }>): Promise<Task[]> {
+  async updateTaskStatuses(updates: Array<{ taskId: number; status: number; order: number }>): Promise<Task[]> {
     const response = await api.put<Task[]>('/update-statuses', updates)
     return response.data
   }

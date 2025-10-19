@@ -23,8 +23,8 @@
 
       <div class="task-meta">
         <div class="task-status">
-          <span :class="`status-badge status-${task.status.toLowerCase()}`">
-            {{ task.status }}
+          <span :class="`status-badge ${getStatusClass(task.status)}`">
+            {{ getStatusText(task.status) }}
           </span>
         </div>
 
@@ -81,6 +81,21 @@ const formatDate = (dateString: string) => {
     year: 'numeric'
   })
 }
+
+const getStatusClass = (status: string | number) => {
+  // Convert status to string for CSS class
+  const statusStr = typeof status === 'number'
+    ? (status === 0 ? 'Todo' : status === 1 ? 'InProgress' : status === 2 ? 'Done' : 'Todo')
+    : status
+  return `status-${statusStr.toLowerCase()}`
+}
+
+const getStatusText = (status: string | number) => {
+  // Convert status to display text
+  return typeof status === 'number'
+    ? (status === 0 ? 'Todo' : status === 1 ? 'InProgress' : status === 2 ? 'Done' : 'Todo')
+    : status
+}
 </script>
 
 <style scoped>
@@ -94,6 +109,12 @@ const formatDate = (dateString: string) => {
 
 .task-card[draggable="true"]:active {
   cursor: grabbing;
+}
+
+.task-card.dragging {
+  opacity: 0.5;
+  transform: rotate(5deg);
+  z-index: 1000;
 }
 
 .task-header {

@@ -118,11 +118,36 @@ export const useTasksStore = defineStore('tasks', () => {
 
   const moveTask = async (taskId: number, newStatus: TaskStatus, newOrder: number) => {
     try {
-      // Optimistically update the UI
+      // Get the task being moved
       const task = tasks.value.find(t => t.id === taskId)
-      if (task) {
-        task.status = newStatus
-        task.order = newOrder
+      if (!task) return
+
+      // Convert statuses to comparable format (string enum)
+      const oldStatusStr = typeof task.status === 'number'
+        ? (task.status === 0 ? 'Todo' : task.status === 1 ? 'InProgress' : task.status === 2 ? 'Done' : 'Todo')
+        : task.status
+      const newStatusStr = newStatus
+
+      // Optimistically update the UI
+      task.status = newStatus
+      task.order = newOrder
+
+      // If moving to a different column, reorder other tasks in the target column
+      if (oldStatusStr !== newStatusStr) {
+        // Get tasks in the target column and reorder them
+        const tasksInTargetColumn = tasks.value
+          .filter(t => {
+            const tStatusStr = typeof t.status === 'number'
+              ? (t.status === 0 ? 'Todo' : t.status === 1 ? 'InProgress' : t.status === 2 ? 'Done' : 'Todo')
+              : t.status
+            return tStatusStr === newStatusStr
+          })
+          .sort((a, b) => (a.order || 0) - (b.order || 0))
+
+        // Update orders for all tasks in the target column
+        tasksInTargetColumn.forEach((t, index) => {
+          t.order = index + 1
+        })
       }
 
       // Convert TaskStatus enum to backend integer format
@@ -130,18 +155,46 @@ export const useTasksStore = defineStore('tasks', () => {
                          newStatus === TaskStatus.InProgress ? 1 :
                          newStatus === TaskStatus.Done ? 2 : 0
 
-      // Update on server
-      const updates = [{
+      // Prepare updates for all affected tasks
+      const updates = []
+
+      // Update the moved task
+      updates.push({
         taskId,
-        status: statusValue.toString(),
+        status: statusValue, // Send as number, not string
         order: newOrder
-      }]
+      })
+
+      // Update other tasks in the target column if status changed
+      if (oldStatusStr !== newStatusStr) {
+        const tasksInTargetColumn = tasks.value
+          .filter(t => {
+            const tStatusStr = typeof t.status === 'number'
+              ? (t.status === 0 ? 'Todo' : t.status === 1 ? 'InProgress' : t.status === 2 ? 'Done' : 'Todo')
+              : t.status
+            return tStatusStr === newStatusStr && t.id !== taskId
+          })
+          .sort((a, b) => (a.order || 0) - (b.order || 0))
+
+        tasksInTargetColumn.forEach((t, index) => {
+          const newOrderForTask = index + 1
+          if (t.order !== newOrderForTask) {
+            updates.push({
+              taskId: t.id,
+              status: statusValue, // Send as number, not string
+              order: newOrderForTask
+            })
+          }
+        })
+      }
 
       await tasksApi.updateTaskStatuses(updates)
     } catch (error) {
       // Revert optimistic update on error - need to get current project ID from tasks
       const currentTask = tasks.value.find(t => t.id === taskId)
-      await getTasksForProject(currentTask?.projectId || 0)
+      if (currentTask?.projectId) {
+        await getTasksForProject(currentTask.projectId)
+      }
       throw error
     }
   }
@@ -157,12 +210,12 @@ export const useTasksStore = defineStore('tasks', () => {
         }
       })
 
-      // Convert TaskStatus enums to backend integer format and then to strings for API
+      // Convert TaskStatus enums to backend integer format
       const convertedUpdates = updates.map(update => ({
         taskId: update.taskId,
-        status: (update.status === TaskStatus.Todo ? 0 :
-                update.status === TaskStatus.InProgress ? 1 :
-                update.status === TaskStatus.Done ? 2 : 0).toString(),
+        status: update.status === TaskStatus.Todo ? 0 :
+               update.status === TaskStatus.InProgress ? 1 :
+               update.status === TaskStatus.Done ? 2 : 0,
         order: update.order
       }))
 

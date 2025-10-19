@@ -53,7 +53,7 @@
             :task="task"
             @edit="handleEditTask"
             @delete="handleDeleteTask"
-            @dragstart="handleDragStart"
+            @dragstart="(event) => handleDragStart(event, task)"
           />
 
           <!-- Empty state for column -->
@@ -489,9 +489,6 @@ const handleDrop = async (event: DragEvent, newStatus: TaskStatus) => {
 
   if (!draggedTask.value) return
 
-  const oldStatus = draggedTask.value.status
-  if (oldStatus === newStatus) return
-
   try {
     const newOrder = getNextOrderForStatus(newStatus)
     await tasksStore.moveTask(draggedTask.value.id, newStatus, newOrder)
@@ -507,7 +504,12 @@ const handleDrop = async (event: DragEvent, newStatus: TaskStatus) => {
 }
 
 const getNextOrderForStatus = (status: TaskStatus): number => {
-  const tasksInStatus = getTasksForStatus(status)
+  // Get tasks directly from the store to avoid stale computed values during drag operations
+  const statusKey = status === TaskStatus.Todo ? 'Todo' :
+                   status === TaskStatus.InProgress ? 'InProgress' :
+                   status === TaskStatus.Done ? 'Done' : 'Todo'
+  const tasksInStatus = tasksByStatus.value[statusKey] || []
+
   if (tasksInStatus.length === 0) return 1
 
   const orders = tasksInStatus
