@@ -74,6 +74,8 @@ A modern, full-stack project management web application built with ASP.NET Core 
 4. **Database Setup**
    The PostgreSQL database will be automatically created and seeded with initial data.
 
+   **Important**: If this is your first run after our security update, you'll need to update the database password in PostgreSQL itself. See the security instructions in the project documentation.
+
 #### 🛠️ Development Features
 
 **Hot Reloading Setup** (`docker-compose.dev.yml`):
@@ -101,11 +103,13 @@ This uses:
 
 For production deployment, use the optimized production setup:
 
-1. **Create environment file (optional)**
+1. **Configure environment variables**
+
+   Edit the `.env` file in the root directory with your production values:
 
    ```bash
-   cp .env.example .env
-   # Edit .env with your production values
+   # Edit .env with your production database and JWT settings
+   nano .env
    ```
 
 2. **Deploy with production configuration**
@@ -140,7 +144,7 @@ The production setup includes:
 3. **Set up database**
 
    ```bash
-   # Update connection string in appsettings.json if needed
+   # Update connection string in appsettings.json with your database details
    dotnet ef database update
    ```
 
@@ -200,20 +204,23 @@ Lumo/
 
 ### Environment Variables
 
-#### Backend (appsettings.json)
+The application uses environment variables for secure configuration. Create a `.env` file in the root directory:
 
-```json
-{
-  "ConnectionStrings": {
-    "DefaultConnection": "Host=localhost;Port=5432;Database=lumo;Username=postgres;Password=password"
-  },
-  "Jwt": {
-    "Key": "YourSuperSecretKeyThatIsAtLeast32CharactersLongForHS256",
-    "Issuer": "https://localhost:5000",
-    "Audience": "https://localhost:5000"
-  }
-}
+```bash
+# Database Configuration
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=your-secure-password-here
+POSTGRES_DB=lumo
+
+# JWT Configuration
+JWT_KEY=your-secure-jwt-key-here
 ```
+
+#### Backend Configuration
+
+The backend reads configuration from environment variables set in `docker-compose.yml`. The connection string and JWT settings are automatically populated from your `.env` file.
+
+**⚠️ Security Note**: Never commit your `.env` file to version control. It's already included in `.gitignore`.
 
 ### API Endpoints
 
@@ -284,11 +291,13 @@ npm run test
 
 ### Production Docker
 
-1. Update environment variables in `docker-compose.yml`
+1. Ensure your `.env` file contains the correct production values
 2. Build and deploy:
    ```bash
    docker-compose -f docker-compose.yml up --build -d
    ```
+
+**Note**: The `docker-compose.yml` file now reads all secrets from environment variables, so no manual updates are needed.
 
 ### Manual Deployment
 
